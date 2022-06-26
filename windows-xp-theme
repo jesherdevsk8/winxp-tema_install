@@ -1,0 +1,13 @@
+sudo apt install wget git
+
+wget https://archive.org/download/bliss-600dpi/bliss-600dpi.png -P ~/Imagens
+
+git clone https://github.com/B00merang-Project/Windows-XP.git Windows-XP-Themes
+
+git clone https://github.com/B00merang-Artwork/Windows-XP.git Windows-XP-Icons
+
+mkdir .themes .icons
+
+cp -r 'Windows-XP-Themes/Windows XP Luna' ~/.themes
+
+cp -r 'Windows-XP-Icons/' ~/.icons
