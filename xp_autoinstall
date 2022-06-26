@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# -----------------------------------------------------------------
+# Script   : xp_autoinstall
+# Descrição: Auto instalação de temas
+# Versão   : 0.1
+# Autor    : Jesher Minelli <jesherdevsk8@gmail.com>
+# Data     : sáb 25 jun 2022
+# Licença  : GNU/GPL v3.0
+# -----------------------------------------------------------------
+# Uso: ./xp_autoinstall
+# -----------------------------------------------------------------
+
+#-------------------------- VARIAVEIS -----------------------------
+
+pacotes=( wget git )
+dir_themes_icons=( "$HOME/.themes" "$HOME/.icons" )
+dir_downloads=($HOME/Downloads)
+dir_imagens=($HOME/Imagens)
+download_wget=( https://archive.org/download/bliss-600dpi/bliss-600dpi.png )
+clone_theme=( "https://github.com/B00merang-Project/Windows-XP.git $dir_downloads/Windows-XP-Themes" )
+clone_icon=( "https://github.com/B00merang-Artwork/Windows-XP.git $dir_downloads/Windows-XP-Icons" )
+themes=($dir_downloads/Windows-XP-Themes)
+icons=($dir_downloads/Windows-XP-Icons)
+
+#--------------------------- TESTES -------------------------------
+
+[[ $UID = '0' ]] && echo "Root Não...!" && exit 1
+
+[[ ! -d $dir_downloads ]] && mkdir $dir_downloads
+
+[[ ! -d $dir_imagens ]] && mkdir $dir_imagens
+
+[[ -d $themes && -d $icons ]] && echo "$themes e $icons já existem" && exit 1
+
+for dirs in ${dir_themes_icons[@]}; do
+	[[ ! -d $dirs ]] && mkdir $dirs
+done
+
+#--------------------------- FUNÇÕES ------------------------------
+
+function instalar_dependencias(){
+	for programas in ${pacotes[@]}; do
+		if [[ ! -x $(which $programas) ]]; then
+			echo "[INFO] $programas Não está instalado. Instalando......."
+			sudo apt install $programas -y 1> /dev/null 2>&1
+		fi			
+	done
+}
+
+function baixar_imagens(){
+	local arquivo=$(echo $download_wget | cut -d / -f 6)
+	[[ -f $dir_imagens/$arquivo ]]
+	if [[ "$?" != '0' ]]; then
+		wget $download_wget -P $dir_imagens
+	fi
+}
+
+function clona_repo() {
+	git clone $clone_icon
+	git clone $clone_theme
+}
+
+function copiar_clones(){
+	cp -r "$themes/Windows XP Luna" $HOME/.themes
+	cp -r "$icons" $HOME/.icons
+}
+
+#---------------------------- MAIN --------------------------------
+
+instalar_dependencias
+baixar_imagens
+clona_repo
+copiar_clones
